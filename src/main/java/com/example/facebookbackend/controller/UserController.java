@@ -1,6 +1,7 @@
 package com.example.facebookbackend.controller;
 
-import com.example.facebookbackend.dto.UserResponse;
+import com.example.facebookbackend.dto.request.UserSignUpRequest;
+import com.example.facebookbackend.dto.response.UserResponse;
 import com.example.facebookbackend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,5 +18,10 @@ public class UserController implements IUserController {
     @Override
     public ResponseEntity<List<UserResponse>> getAll() {
         return ResponseEntity.ok(userService.getAll());
+    }
+
+    @Override
+    public ResponseEntity<UserResponse> signUp(UserSignUpRequest userSignUpRequest) {
+        return ResponseEntity.ok(userService.signUp(userSignUpRequest));
     }
 }
