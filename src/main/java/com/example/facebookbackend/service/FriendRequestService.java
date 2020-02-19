@@ -64,7 +64,13 @@ public class FriendRequestService implements IFriendRequestService {
 
     @Override
     public SuccessResponse rejectFriendRequest(FriendRequestRequest friendRequestRequest) {
-        return null;
+        FriendRequest friendRequest = friendRequestRepository.findByUserIdAndFriendId(friendRequestRequest.getUserId(), friendRequestRequest.getFriendId());
+        if (friendRequest != null) {
+            friendRequest.setStatus(FriendRequestStatus.REJECT);
+            friendRequestRepository.save(friendRequest);
+            return new SuccessResponse();
+        }
+        throw new RuntimeException("Cannot reject friend request");
     }
 
 }
