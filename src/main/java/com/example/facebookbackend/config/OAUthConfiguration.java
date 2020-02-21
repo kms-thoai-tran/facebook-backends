@@ -11,7 +11,10 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.DefaultUserAuthenticationConverter;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.UserAuthenticationConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
@@ -40,7 +43,9 @@ public class OAUthConfiguration extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(tokenStore()).authenticationManager(authenticationManager).accessTokenConverter(defaultAccessTokenConverter()).userDetailsService(userService);
+        endpoints.tokenStore(tokenStore()).authenticationManager(authenticationManager)
+                .accessTokenConverter(defaultAccessTokenConverter())
+                .userDetailsService(userService);
     }
 
     @Override
@@ -49,8 +54,8 @@ public class OAUthConfiguration extends AuthorizationServerConfigurerAdapter {
                 .secret(Constant.CLIENT_SECRET)
                 .scopes(SCOPE_READ, SCOPE_WRITE, TRUST)
                 .authorizedGrantTypes(GRANT_TYPE_PASSWORD, AUTHORIZATION_CODE, REFRESH_TOKEN)
-                .accessTokenValiditySeconds(180)//Access token is only valid for 3 minutes.
-                .refreshTokenValiditySeconds(600)//Refresh token is only valid for 10 minutes.;
+                .accessTokenValiditySeconds(VALID_FOREVER)//Access token is only valid for 3 minutes.
+                .refreshTokenValiditySeconds(VALID_FOREVER)//Refresh token is only valid for 10 minutes.;
                 .autoApprove(true);
     }
 
@@ -59,10 +64,20 @@ public class OAUthConfiguration extends AuthorizationServerConfigurerAdapter {
         return new JwtTokenStore(defaultAccessTokenConverter());
     }
 
+    // https://stackoverflow.com/questions/54279755/getprincipal-method-returning-username-instead-of-userdetails
     @Bean
     public JwtAccessTokenConverter defaultAccessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setSigningKey("123");
+        ((DefaultAccessTokenConverter) converter.getAccessTokenConverter())
+                .setUserTokenConverter(userAuthenticationConverter());
         return converter;
+    }
+
+    @Bean
+    public UserAuthenticationConverter userAuthenticationConverter() {
+        DefaultUserAuthenticationConverter defaultUserAuthenticationConverter = new DefaultUserAuthenticationConverter();
+        defaultUserAuthenticationConverter.setUserDetailsService(userService);
+        return defaultUserAuthenticationConverter;
     }
 }

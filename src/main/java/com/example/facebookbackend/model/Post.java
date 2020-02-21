@@ -6,12 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
-import java.util.Date;
+import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -19,19 +15,32 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Post {
+public class Post extends DbEntityBase {
     @Id
     @GeneratedValue(generator = "uuid2", strategy = GenerationType.IDENTITY)
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
     UUID id;
 
-    @NotBlank(message = "text is required")
     String text;
 
-    Date time;
+    @OneToOne
+    @JoinColumn(name = "userId", referencedColumnName = "id")
+    User user;
 
-//    Set<User> users;
-//    Set<FacebookLike> likes;
-//    Set<Comment> comments;
-//    Set<Image> images;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tagId", referencedColumnName = "id")
+    Set<User> tags;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "postId", referencedColumnName = "id")
+    Set<FacebookLike> facebookLikes;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "commentId", referencedColumnName = "id")
+    Set<Comment> comments;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "imageId", referencedColumnName = "id")
+    Set<Image> images;
 }

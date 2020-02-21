@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class FacebookBackendApplication {
     public static void main(String[] args) {
 //		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-//		System.out.println(encoder.encode("abc123"));
+//        System.out.println(encoder.encode("my-secret"));
+//		System.out.println(encoder.matches("my-secret", "$2a$10$1B3CLhTWseUyOLvvUTgtOuiiwbb8uEMTkWc44uETl.4YhzgViHczu"));
         SpringApplication.run(FacebookBackendApplication.class, args);
     }
 }

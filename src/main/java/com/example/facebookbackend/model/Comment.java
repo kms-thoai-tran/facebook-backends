@@ -30,7 +30,7 @@ public class Comment {
     Date time;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "like_id", referencedColumnName = "Id")
+    @JoinColumn(name = "commentId", referencedColumnName = "Id")
     List<FacebookLike> likes;
 //    Set<Comment> comments;
 }

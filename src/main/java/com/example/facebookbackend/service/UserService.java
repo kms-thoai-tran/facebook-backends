@@ -3,6 +3,7 @@ package com.example.facebookbackend.service;
 import com.example.facebookbackend.dto.request.UserSignUpRequest;
 import com.example.facebookbackend.dto.response.UserResponse;
 import com.example.facebookbackend.model.User;
+import com.example.facebookbackend.model.UserPrincipal;
 import com.example.facebookbackend.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,8 +27,7 @@ public class UserService implements UserDetailsService, IUserService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
-//       user.setPassword("$2a$10$wFz8eHQejQDU/2L8JxP75eECkTlYz/BCvDfKv/fqFQvlhpkD3Hc7W");
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), getGrantedAuthorities(user.getRole()));
+        return new UserPrincipal(user.getEmail(), user.getPassword(), getGrantedAuthorities(user.getRole()), user);
     }
 
     private Collection<? extends GrantedAuthority> getGrantedAuthorities(String role) {

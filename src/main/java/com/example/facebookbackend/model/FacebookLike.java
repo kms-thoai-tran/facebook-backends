@@ -1,34 +1,51 @@
 package com.example.facebookbackend.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.example.facebookbackend.util.FacebookLikeType;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
-import java.util.Date;
+import javax.persistence.*;
 import java.util.UUID;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
-public class FacebookLike {
+public class FacebookLike extends DbEntityBase {
     @Id
     @GeneratedValue(generator = "uuid2", strategy = GenerationType.IDENTITY)
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
     UUID id;
 
-    @NotBlank(message = "url is required")
-    String url;
+    @Enumerated(EnumType.STRING)
+    FacebookLikeType type;
 
-    Date time;
-    //    Set<FacebookLike> likes;
-    //    Set<Comment> comments;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "likeId", referencedColumnName = "id")
+    User user;
+
+    public FacebookLike() {
+
+    }
+
+    ;
+
+    public FacebookLike(FacebookLikeType type) {
+        this.type = type;
+    }
+
+    ;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public FacebookLikeType getType() {
+        return type;
+    }
+
+    public void setType(FacebookLikeType type) {
+        this.type = type;
+    }
 }

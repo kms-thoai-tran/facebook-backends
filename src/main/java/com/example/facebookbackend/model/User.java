@@ -10,7 +10,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -18,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-public class User {
+public class User extends DbEntityBase {
     @Id
     @GeneratedValue(generator = "uuid2", strategy = GenerationType.IDENTITY)
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -37,14 +36,6 @@ public class User {
     @Column(name = "enabled")
     short enabled;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "friendId", referencedColumnName = "id")
-    Set<User> userFriends;
-
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "friendRequestId", referencedColumnName = "id")
-//    @Where(clause = "status = New")
-//    Set<FriendRequest> friendRequests;
 
     public static User fromEntity(UserSignUpRequest userSignUpRequest) {
         if (userSignUpRequest == null) {

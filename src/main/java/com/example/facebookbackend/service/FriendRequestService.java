@@ -53,7 +53,7 @@ public class FriendRequestService implements IFriendRequestService {
         Optional<User> friendOpt = users.stream().filter(x -> x.getId().equals(friendRequestRequest.getFriendId())).findFirst();
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            user.getUserFriends().add(friendOpt.get());
+//            user.getUserFriends().add(friendOpt.get());
             userRepository.save(user);
             FriendRequest friendRequest = friendRequestRepository.findByUserIdAndFriendId(friendRequestRequest.getUserId(), friendRequestRequest.getFriendId());
             friendRequestRepository.delete(friendRequest);
