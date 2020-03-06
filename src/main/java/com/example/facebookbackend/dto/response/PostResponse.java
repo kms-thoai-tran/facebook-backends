@@ -4,7 +4,6 @@ import com.example.facebookbackend.model.Post;
 
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class PostResponse extends SuccessResponse {
     UUID id;
@@ -56,18 +55,18 @@ public class PostResponse extends SuccessResponse {
     public static PostResponse convertFrom(Post post) {
         PostResponse postResponse = new PostResponse();
         postResponse.setId(post.getId());
-        if (post.getTags() != null) {
-            postResponse.setTagIds(post.getTags().stream().map(x -> x.getId()).collect(Collectors.toSet()));
-        }
+//        if (post.getTags() != null) {
+//            postResponse.setTagIds(post.getTags().stream().map(x -> x.getId()).collect(Collectors.toSet()));
+//        }
         if (post.getText() != null) {
             postResponse.setText(post.getText());
         }
-        if (post.getFacebookLikes() != null) {
-            postResponse.setLikes(post.getFacebookLikes().stream().map(x -> x.getId()).collect(Collectors.toSet()));
-        }
-        if (post.getImages() != null) {
-            postResponse.setImageIds(post.getImages().stream().map(x -> x.getUrl()).collect(Collectors.toSet()));
-        }
+//        if (post.getFacebookLikes() != null) {
+//            postResponse.setLikes(post.getFacebookLikes().stream().map(x -> x.getId()).collect(Collectors.toSet()));
+//        }
+//        if (post.getImages() != null) {
+//            postResponse.setImageIds(post.getImages().stream().map(x -> x.getUrl()).collect(Collectors.toSet()));
+//        }
         return postResponse;
     }
 }

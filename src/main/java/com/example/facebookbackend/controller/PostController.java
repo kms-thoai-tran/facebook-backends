@@ -7,6 +7,7 @@ import com.example.facebookbackend.service.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.util.UUID;
@@ -18,17 +19,17 @@ public class PostController implements IPostController {
     IPostService postService;
 
     @Override
-    public ResponseEntity<PostResponse> getPostById(@Valid UUID id) {
+    public ResponseEntity<Mono<PostResponse>> getPostById(@Valid UUID id) {
         return ResponseEntity.ok().body(postService.getPostById(id));
     }
 
     @Override
-    public ResponseEntity<PostResponse> create(PostRequest postRequest) {
+    public ResponseEntity<Mono<PostResponse>> create(PostRequest postRequest) {
         return ResponseEntity.ok().body(postService.create(postRequest));
     }
 
     @Override
-    public ResponseEntity<SuccessResponse> update(@Valid UUID id, @Valid PostRequest postRequest) {
+    public ResponseEntity<Mono<SuccessResponse>> update(@Valid UUID id, @Valid PostRequest postRequest) {
         return ResponseEntity.ok().body(postService.update(id, postRequest));
     }
 

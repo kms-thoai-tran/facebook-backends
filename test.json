@@ -1,0 +1,44 @@
+{
+  "id": "122118e2-6be5-4973-8e64-2f9b5e77e898",
+  "values": [
+    {
+      "key": "client_id",
+      "value": "7C994A57-ACB3-42F2-BE7D-E01149711685",
+      "enabled": true
+    },
+    {
+      "key": "client_secret",
+      "value": "r#k2+pJ7jJA@",
+      "enabled": true
+    },
+    {
+      "key": "organization_id",
+      "value": "00000001-0000-0000-0000-000000000000",
+      "enabled": true
+    },
+    {
+      "key": "Authorization",
+      "value": "7C994A57-ACB3-42F2-BE7D-E01149711685 Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzNjY0MzgzMC0zMjYzLTM1MzUtMmQzMy02MzYzMzcyZDM3MzAiLCJvcmdhbml6YXRpb25faWQiOiIwMDAwMDAwMS0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJuYW1lIjoiMkRCRENGNjItNjJFOC00REVBLTlENUYtMDFFRjlBQTdFNkRFIiwiZW1haWwiOiJ2LmRhdG5kNkBjbG91ZGhtcy5uZXQiLCJwaG9uZV9udW1iZXIiOiIiLCJzb2NpYWxfdWlkIjoiMkRCRENGNjItNjJFOC00REVBLTlENUYtMDFFRjlBQTdFNkRFIiwib3JnYW5pemF0aW9uX2NvZGUiOiJ2aW5wZWFybCIsInRva2VuX3VzYWdlIjoiYWNjZXNzX3Rva2VuIiwianRpIjoiOTU1ZTI5MmEtYjlmYi00ZjA1LWJjNzctMWMwM2QxZTFmOTA3IiwiY2ZkX2x2bCI6InByaXZhdGUiLCJzY29wZSI6WyJobXNfZ3Vlc3RfcG9ydGFsIiwiaG1zX2NhcHRjaGFfZnJlZSIsImhtc19nZW5lcmFsIiwib2ZmbGluZV9hY2Nlc3MiXSwiYXVkIjoiN0M5OTRBNTctQUNCMy00MkYyLUJFN0QtRTAxMTQ5NzExNjg1IiwiYXpwIjoiN0M5OTRBNTctQUNCMy00MkYyLUJFN0QtRTAxMTQ5NzExNjg1IiwibmJmIjoxNTc2NTgxNzE3LCJleHAiOjE1NzY2MTA1MTcsImlhdCI6MTU3NjU4MTcxNywiaXNzIjoiaHR0cDovL2F0cy1pZGVudGl0eS1wYXNzd29yZC5pbnRlcm5hbC1zdmMuZGV2LmNsb3VkaG1zLmlvLyJ9.vMdXvpfy70eE6Z7ldKvTlitMT5jLWTXDvIsYEmRPV7k",
+      "enabled": true
+    },
+    {
+      "key": "HmsIdentity",
+      "value": "{\"sub\":\"36643830-3263-3535-2d33-6363372d3730\",\"organization_id\":\"00000001-0000-0000-0000-000000000000\",\"name\":\"2DBDCF62-62E8-4DEA-9D5F-01EF9AA7E6DE\",\"email\":\"v.datnd6@cloudhms.net\",\"phone_number\":\"\",\"social_uid\":\"2DBDCF62-62E8-4DEA-9D5F-01EF9AA7E6DE\",\"organization_code\":\"vinpearl\",\"token_usage\":\"access_token\",\"jti\":\"955e292a-b9fb-4f05-bc77-1c03d1e1f907\",\"cfd_lvl\":\"private\",\"scope\":[\"hms_guest_portal\",\"hms_captcha_free\",\"hms_general\",\"offline_access\"],\"aud\":\"7C994A57-ACB3-42F2-BE7D-E01149711685\",\"azp\":\"7C994A57-ACB3-42F2-BE7D-E01149711685\",\"nbf\":1576581717,\"exp\":1576610517,\"iat\":1576581717,\"iss\":\"http://ats-identity-password.internal-svc.dev.cloudhms.io/\"}",
+      "enabled": true
+    },
+    {
+      "key": "RefreshToken",
+      "value": "CfDJ8PUuQRGeUUlPpn1OIQYPTtZLoJ7LN4AChlhy8CzISnB7MXkvp9eKz-A2C9V8MjAN9W2LN5P01LN_24V6SwWbWe8QHHlGjlIFVA7zJjz1oBqOhgilobopUmBhG3sBAoDCfomOUACUMmKOcAnz834Rnm7zTkV5kPm8mJfGGb4Ajp-l-uh049lCqmvAG_kMZ6_7fVaMsA6L5R2Zw1qLJv1vO6iu6zXuUyvDkbxjZUX_HlXEQqs0Pm7Myp8roL9MwpXm9n1JRFbVaQ5h3fW9RMBeCWsxuZ3Z8Xa9484PNBvAJlaT_tK8FLSWxW34lNf3Ivsz1EMfQ3j372Fy-n22UQPs2QGUentcnPh7t-8ckJecuX6VMvivRtow3mdYKwp9CfLMVQs47ZGXd8dod_RZBDVrwpRrEMYPIRT7GxMDckxKI1H4h6AlvzAbuIxnNvt1TCyzF6LWRT9KxIErm7Z3WKYlUvEimYQAaC5JRIkcAII79_DSEyIdh3hUYgPm004IT8PVWpgvsfcrf4BG1pDUrzuPgZubbZUSS5jM8FjKzdxG44Y6tQ9rhYWwfAX0yNM10yN_U82GcS5vNpp0EpXT2Kdw8czpWKmmCs8qPR3xQPq5PIgKb0jFbeXzuUiByR5WxjlIPFVEt1l_66Wg6-4dj8cFKS9br_eXhidJ5d5hl6PlQi_kpbbbDD6bILfke62zUv7ubk4I4S7YMbFS4f6olN5SrbvC7N9SzqC6gB3310PbIpcgHcP_kn3fdUNRhsU7TeBzCQ6z75AyyIem0o6P4qbOZKvBTUKJ770_rtbGUVNGgCFT9mNgIjuT99Ga6ZC0MTmmNwaxczNlQhU9kgXODbLJ1avG4ZWJ_orr30_0mcKiAIk4YbK3qZds0vdVQunKDRS5fI28VvOvemNY7GxkrUM34QuxpwASEaX2TMNpCXXzMK3o9ETHP7bKP6JUj5SzI1O6xVsjLeWYDpbtWD6mNev6Z9D2LXHGSI5JHFWQHUICUjWfZL8_w_YCnNaxo-wW_lpOxLxZuI97WzL_NVw3NeIejKinWndRx88ZjYuuubkComU1MqDMXicunahP53RqwtrRwJIx-8Goeip6f0yIESGdUw1POORF7jvr_oNNxv1854irdlancTte7BihzVaV9MUlnI9nRgUSKjOsbMcCrxRRAYVMmHqoZnNJaNQXTKWro2XpIveJlK5e4nZWscQZJlQCMohDvddWAMdYRSNEmO9R6PU9qD2gs3HzE--2PUvBVcnAP1PIPb18VMNd4dEzUb5M3zVc0sxgVQ7cQF-bl38rpS_KCU4dOX121mhz7vWiauTROy47Wpv53e8vQlG8FYh9hZjM2ZmDaEHAKijQU6YoJQ6rdv9YmX7-JZ9qRKGCYzTgYFQD9WEAg0Ad0Qd6rLh45Y4btJGf6soHhnooYmxYa1gKZT4nQWO3W9LgjxkBPo5nWt42TfDOtzPCXeD2Fhqc_EjuMBY8NMB9WWgMuQTIr5HwkQ4-iNa418fi_qyhDNwX",
+      "enabled": true
+    },
+    {
+      "key": "HmsPropertyId",
+      "value": "5a892ebf-925e-0c2a-9273-bff1ec83759b",
+      "enabled": true
+    }
+  ],
+  "name": "My Workspace Globals",
+  "_postman_variable_scope": "globals",
+  "_postman_exported_at": "2019-12-20T02:13:55.429Z",
+  "_postman_exported_using": "Postman/7.13.0"
+}

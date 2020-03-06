@@ -17,9 +17,9 @@ public class FacebookLike extends DbEntityBase {
     @Enumerated(EnumType.STRING)
     FacebookLikeType type;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "likeId", referencedColumnName = "id")
-    User user;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "likeId", referencedColumnName = "id")
+//    User user;
 
     public FacebookLike() {
 
