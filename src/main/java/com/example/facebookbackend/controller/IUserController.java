@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -19,6 +20,6 @@ public interface IUserController {
     ResponseEntity<List<UserResponse>> getAll();
 
     @PostMapping("/sign-up")
-    ResponseEntity<UserResponse> signUp(@RequestBody UserSignUpRequest userSignUpRequest);
+    ResponseEntity<Mono<UserResponse>> signUp(@RequestBody UserSignUpRequest userSignUpRequest);
 
 }

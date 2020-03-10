@@ -22,8 +22,7 @@ public class FacebookBackendApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        Mono<Map<String, AttributeValue>> test =  dynamoDbService.putItem(new HashMap<>());
-//        Mono<Collection<AttributeValue>> test1 = test.map(x -> x.values());
-//        System.out.println(test1);
+//         dynamoDbService.createTable();
+//        System.out.println("DONE");
     }
 }

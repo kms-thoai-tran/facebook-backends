@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -19,6 +20,11 @@ public class DynamoService implements IDynamoDbService {
 
     @Override
     public void createTable() {
+
+        ProvisionedThroughput ptIndex = ProvisionedThroughput.builder()
+                .writeCapacityUnits(1L)
+                .readCapacityUnits(1L).build();
+
         CreateTableRequest createTableRequest = CreateTableRequest.builder()
                 .tableName(tableName)
                 .attributeDefinitions(AttributeDefinition.builder()
@@ -37,9 +43,17 @@ public class DynamoService implements IDynamoDbService {
                                 .attributeName("SK")
                                 .keyType(KeyType.RANGE)
                                 .build())
-                .provisionedThroughput(ProvisionedThroughput.builder()
-                        .readCapacityUnits((long) 10)
-                        .writeCapacityUnits((long) 10).build())
+                .globalSecondaryIndexes(GlobalSecondaryIndex.builder()
+                        .indexName("SKIndex")
+                        .provisionedThroughput(ptIndex)
+                        .keySchema(KeySchemaElement.builder()
+                                .attributeName("SK")
+                                .keyType(KeyType.HASH).build()
+                        )
+                        .projection(Projection.builder().projectionType(ProjectionType.INCLUDE).nonKeyAttributes("password").build())
+                        .build())
+                .provisionedThroughput(ptIndex)
+
                 .build();
 
         System.out.println("Creating table " + tableName + "...");
@@ -88,5 +102,11 @@ public class DynamoService implements IDynamoDbService {
         CompletableFuture<GetItemResponse> getItemResponseCompletableFuture = dynamoDbAsyncClient.getItem(getItemRequest);
 
         return getItemResponseCompletableFuture.thenApply(GetItemResponse::item);
+    }
+
+    @Override
+    public CompletableFuture<List<Map<String, AttributeValue>>> query(QueryRequest queryRequest) {
+        CompletableFuture<QueryResponse> responseCompletableFuture = dynamoDbAsyncClient.query(queryRequest);
+        return responseCompletableFuture.thenApplyAsync(QueryResponse::items);
     }
 }

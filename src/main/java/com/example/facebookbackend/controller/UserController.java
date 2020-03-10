@@ -6,6 +6,7 @@ import com.example.facebookbackend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class UserController implements IUserController {
     }
 
     @Override
-    public ResponseEntity<UserResponse> signUp(UserSignUpRequest userSignUpRequest) {
+    public ResponseEntity<Mono<UserResponse>> signUp(UserSignUpRequest userSignUpRequest) {
         return ResponseEntity.ok(userService.signUp(userSignUpRequest));
     }
 }
