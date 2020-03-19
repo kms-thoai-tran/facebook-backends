@@ -19,6 +19,13 @@ public class DynamoService implements IDynamoDbService {
     DynamoDbAsyncClient dynamoDbAsyncClient;
 
     @Override
+    public Boolean doesTableExist(String tableName) {
+        CompletableFuture<ListTablesResponse> listTablesResponseCompletableFuture = dynamoDbAsyncClient.listTables();
+        return listTablesResponseCompletableFuture.join().tableNames().stream()
+                .anyMatch(t -> tableName.compareTo(t) == 0);
+    }
+
+    @Override
     public void createTable() {
 
         ProvisionedThroughput ptIndex = ProvisionedThroughput.builder()
@@ -78,6 +85,7 @@ public class DynamoService implements IDynamoDbService {
         }
         PutItemRequest putItemRequest = PutItemRequest.builder()
                 .tableName(tableName)
+                .returnValues(ReturnValue.ALL_OLD)
                 .item(item)
                 .build();
 
@@ -98,7 +106,7 @@ public class DynamoService implements IDynamoDbService {
     }
 
     @Override
-    public CompletableFuture<Map<String, AttributeValue>> findByItemRequest(GetItemRequest getItemRequest) {
+    public CompletableFuture<Map<String, AttributeValue>> getItem(GetItemRequest getItemRequest) {
         CompletableFuture<GetItemResponse> getItemResponseCompletableFuture = dynamoDbAsyncClient.getItem(getItemRequest);
 
         return getItemResponseCompletableFuture.thenApply(GetItemResponse::item);
@@ -108,5 +116,32 @@ public class DynamoService implements IDynamoDbService {
     public CompletableFuture<List<Map<String, AttributeValue>>> query(QueryRequest queryRequest) {
         CompletableFuture<QueryResponse> responseCompletableFuture = dynamoDbAsyncClient.query(queryRequest);
         return responseCompletableFuture.thenApplyAsync(QueryResponse::items);
+    }
+
+    @Override
+    public CompletableFuture<List<Map<String, AttributeValue>>> findAllByItemRequest(ScanRequest scanRequest) {
+        CompletableFuture<ScanResponse> scanResponseCompletableFuture = dynamoDbAsyncClient.scan(scanRequest);
+        return scanResponseCompletableFuture.thenApplyAsync(ScanResponse::items);
+    }
+
+    @Override
+    public void batchWriteItem(BatchWriteItemRequest batchWriteItemRequest) {
+        CompletableFuture<BatchWriteItemResponse> batchWriteItemResponseCompletableFuture = dynamoDbAsyncClient.batchWriteItem(batchWriteItemRequest);
+        CompletableFuture<Map<String, List<WriteRequest>>> result = batchWriteItemResponseCompletableFuture.thenApplyAsync(BatchWriteItemResponse::unprocessedItems);
+        if (result.join().size() == 0) {
+            System.out.println("Update Successful");
+        }
+    }
+
+    @Override
+    public Map<String, List<Map<String, AttributeValue>>> batchGetItem(BatchGetItemRequest batchGetItemRequest) {
+        CompletableFuture<BatchGetItemResponse> batchGetItemResponseCompletableFuture = dynamoDbAsyncClient.batchGetItem(batchGetItemRequest);
+        return batchGetItemResponseCompletableFuture.join().responses();
+    }
+
+    @Override
+    public Map<String, AttributeValue> deleteItem(DeleteItemRequest deleteItemRequest) {
+        CompletableFuture<DeleteItemResponse> deleteItemResponseCompletableFuture = dynamoDbAsyncClient.deleteItem(deleteItemRequest);
+        return deleteItemResponseCompletableFuture.join().attributes();
     }
 }

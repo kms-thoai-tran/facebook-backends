@@ -15,6 +15,7 @@ public class UserMapper {
         Map<String, AttributeValue> map = new HashMap<>();
         map.put("PK", AttributeValue.builder().s(String.join("#", "USER", user.getId().toString())).build());
         map.put("SK", AttributeValue.builder().s(user.getEmail()).build());
+        map.put("enable", AttributeValue.builder().bool(user.isEnabled()).build());
         map.put("password", AttributeValue.builder().s(new BCryptPasswordEncoder().encode(user.getPassword())).build());
         return map;
     }
@@ -36,6 +37,7 @@ public class UserMapper {
         User user = new User();
         user.setEmail(attributeValueMap.get("SK").s());
         user.setPassword(attributeValueMap.get("password").s());
+        user.setId(UUID.fromString(attributeValueMap.get("PK").s().split("#")[1]));
         return user;
 
     }

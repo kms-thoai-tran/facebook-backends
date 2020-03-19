@@ -54,7 +54,7 @@ public class UserService implements UserDetailsService, IUserService {
             User user = userOpt.get();
             return new UserPrincipal(user.getEmail(), user.getPassword(), getGrantedAuthorities(user.getRole()), user);
         }
-        throw new RuntimeException("Cannot found User");
+        throw new RuntimeException("User cannot found ");
     }
 
     private Collection<? extends GrantedAuthority> getGrantedAuthorities(String role) {
@@ -77,6 +77,7 @@ public class UserService implements UserDetailsService, IUserService {
                 .id(UUID.randomUUID())
                 .email(userSignUpRequest.getEmail())
                 .password(userSignUpRequest.getPassword())
+                .enabled(true)
                 .build()));
         return Mono.fromCompletionStage(a).map(UserMapper::fromMap);
     }

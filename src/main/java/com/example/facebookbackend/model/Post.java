@@ -1,10 +1,13 @@
 package com.example.facebookbackend.model;
 
+import com.example.facebookbackend.util.FacebookLikeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -15,16 +18,7 @@ public class Post extends DbEntityBase {
     UUID id;
     String text;
     UUID userId;
-
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "postId", referencedColumnName = "id")
-//    Set<FacebookLike> facebookLikes;
-//
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "commentId", referencedColumnName = "id")
-//    Set<Comment> comments;
-//
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "imageId", referencedColumnName = "id")
-//    Set<Image> images;
+    Set<UUID> tagIds;
+    Map<String, FacebookLikeType> facebookLikes;
+    Map<String, String> comment;
 }

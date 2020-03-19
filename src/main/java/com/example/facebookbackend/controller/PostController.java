@@ -1,8 +1,10 @@
 package com.example.facebookbackend.controller;
 
+import com.example.facebookbackend.dto.request.PostCommentRequest;
 import com.example.facebookbackend.dto.request.PostRequest;
 import com.example.facebookbackend.dto.response.PostResponse;
 import com.example.facebookbackend.dto.response.SuccessResponse;
+import com.example.facebookbackend.model.PostComment;
 import com.example.facebookbackend.service.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,5 +38,20 @@ public class PostController implements IPostController {
     @Override
     public ResponseEntity<SuccessResponse> delete(@Valid UUID postId) {
         return ResponseEntity.ok().body(postService.delete(postId));
+    }
+
+    @Override
+    public ResponseEntity<Mono<PostComment>> createComment(@Valid UUID id, PostCommentRequest postCommentRequest) {
+        return ResponseEntity.ok().body(postService.createComment(id, postCommentRequest));
+    }
+
+    @Override
+    public ResponseEntity<Mono<PostComment>> updateComment(@Valid UUID id, PostCommentRequest postCommentRequest) {
+        return ResponseEntity.ok().body(postService.updateComment(id, postCommentRequest));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse> deleteComment(@Valid UUID postId, PostCommentRequest postCommentRequest) {
+        return ResponseEntity.ok().body(postService.deleteComment(postId, postCommentRequest.getCommentId()));
     }
 }

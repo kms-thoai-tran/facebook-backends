@@ -34,7 +34,7 @@ public class User extends DbEntityBase {
     String role;
 
     @Column(name = "enabled")
-    short enabled;
+    boolean enabled;
 
 
     public static User fromEntity(UserSignUpRequest userSignUpRequest) {
