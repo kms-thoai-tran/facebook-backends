@@ -1,76 +1,84 @@
 package com.example.facebookbackend.service;
 
 import com.example.facebookbackend.dto.request.FriendRequestRequest;
-import com.example.facebookbackend.dto.response.SuccessResponse;
-import com.example.facebookbackend.dto.response.UserResponse;
+import com.example.facebookbackend.dto.response.FriendRequestResponse;
 import com.example.facebookbackend.model.FriendRequest;
-import com.example.facebookbackend.model.User;
-import com.example.facebookbackend.repository.IFriendRequestRepository;
 import com.example.facebookbackend.repository.IUserRepository;
+import com.example.facebookbackend.service.mapper.FriendRequestMapper;
 import com.example.facebookbackend.util.FriendRequestStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
+import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Service
-public class FriendRequestService implements IFriendRequestService {
-    @Autowired
-    IFriendRequestRepository friendRequestRepository;
+public class FriendRequestService extends BaseService implements IFriendRequestService {
 
     @Autowired
     IUserRepository userRepository;
 
+    @Autowired
+    IDynamoDbService dynamoDbService;
+
     @Override
-    public List<UserResponse> getFriendRequests(UUID userId) {
-        Optional<User> userOpt = userRepository.findById(userId);
-        return null;
+    public Mono<List<FriendRequestResponse>> getFriendRequests(String status) {
+        Map<String, AttributeValue> attrValues = new HashMap<>();
+//        attrValues.put(":PK", AttributeValue.builder().s(String.join("#", "USER", getCurrentUserId().toString())).build());
+        attrValues.put(":PK", AttributeValue.builder().s(String.join("#", "USER", "c61744ed-3360-44b8-b0ad-0d6b3497b432")).build());
+        attrValues.put(":SK", AttributeValue.builder().s("FRIEND#").build());
+        QueryRequest queryRequest = QueryRequest.builder()
+                .tableName("facebook")
+                .keyConditionExpression("PK=:PK and begins_with(SK, :SK)")
+//                .expressionAttributeNames(attrNameAlias)
+                .expressionAttributeValues(attrValues)
+                .build();
+        CompletableFuture<List<Map<String, AttributeValue>>> query = dynamoDbService.query(queryRequest);
+        return Mono.fromCompletionStage(query).map(FriendRequestMapper::fromMapList);
     }
 
     @Override
-    public SuccessResponse createFriendRequest(FriendRequestRequest friendRequestRequest) {
-        List<User> users = userRepository.findByIdIn(Arrays.asList(friendRequestRequest.getUserId(), friendRequestRequest.getFriendId()));
-        if (users.size() == 2) {
-            FriendRequest friendRequest = new FriendRequest();
-            friendRequest.setUserId(friendRequestRequest.getUserId());
-            friendRequest.setFriendId(friendRequestRequest.getFriendId());
-            friendRequest.setStatus(FriendRequestStatus.NEW);
-            friendRequestRepository.save(friendRequest);
-            return new SuccessResponse();
-        }
-        throw new RuntimeException("Cannot create friend request");
+    public Mono<FriendRequestResponse> createFriendRequest(FriendRequestRequest friendRequestRequest) {
+        Map<String, AttributeValue> attributeValueHashMap = new HashMap<>();
+        attributeValueHashMap.put("PK", AttributeValue.builder().s(String.join("#", "USER", friendRequestRequest.getFriendId().toString())).build());
+        attributeValueHashMap.put("SK", AttributeValue.builder().s(String.join("#", "FRIEND", getCurrentUserId().toString())).build());
+        attributeValueHashMap.put("status", AttributeValue.builder().s(FriendRequestStatus.NEW.toString()).build());
+        CompletableFuture<Map<String, AttributeValue>> result = dynamoDbService.putItem(attributeValueHashMap);
+        return Mono.fromCompletionStage(result).map(FriendRequestMapper::fromMap);
+//        return Mono.fromCompletionStage(result).map(FriendRequestMapper:: fromMap);
     }
 
     @Override
-    @Transactional
-    public SuccessResponse acceptFriendRequest(FriendRequestRequest friendRequestRequest) {
-        List<User> users = userRepository.findByIdIn(Arrays.asList(friendRequestRequest.getUserId(), friendRequestRequest.getFriendId()));
-        Optional<User> userOpt = users.stream().filter(x -> x.getId().equals(friendRequestRequest.getUserId())).findFirst();
-        Optional<User> friendOpt = users.stream().filter(x -> x.getId().equals(friendRequestRequest.getFriendId())).findFirst();
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-//            user.getUserFriends().add(friendOpt.get());
-            userRepository.save(user);
-            FriendRequest friendRequest = friendRequestRepository.findByUserIdAndFriendId(friendRequestRequest.getUserId(), friendRequestRequest.getFriendId());
-            friendRequestRepository.delete(friendRequest);
-            return new SuccessResponse();
-        }
-        throw new RuntimeException("Cannot accept friend request");
+    public Mono<FriendRequestResponse> acceptFriendRequest(FriendRequestRequest friendRequestRequest) {
+        FriendRequest friendRequest = FriendRequest.builder()
+                .friendId(friendRequestRequest.getFriendId())
+                .status(FriendRequestStatus.ACCEPT).build();
+        return updateFriendRequest(friendRequest);
     }
 
     @Override
-    public SuccessResponse rejectFriendRequest(FriendRequestRequest friendRequestRequest) {
-        FriendRequest friendRequest = friendRequestRepository.findByUserIdAndFriendId(friendRequestRequest.getUserId(), friendRequestRequest.getFriendId());
-        if (friendRequest != null) {
-            friendRequest.setStatus(FriendRequestStatus.REJECT);
-            friendRequestRepository.save(friendRequest);
-            return new SuccessResponse();
-        }
-        throw new RuntimeException("Cannot reject friend request");
+    public Mono<FriendRequestResponse> rejectFriendRequest(FriendRequestRequest friendRequestRequest) {
+        FriendRequest friendRequest = FriendRequest.builder()
+                .friendId(friendRequestRequest.getFriendId())
+                .status(FriendRequestStatus.REJECT).build();
+        return updateFriendRequest(friendRequest);
     }
 
+    private Mono<FriendRequestResponse> updateFriendRequest(FriendRequest friendRequest) {
+        Map<String, AttributeValue> attributeValueHashMap = new HashMap<>();
+//        attributeValueHashMap.put("PK", AttributeValue.builder().s(String.join("#", "USER", getCurrentUserId().toString())).build());
+        attributeValueHashMap.put("PK", AttributeValue.builder().s(String.join("#", "USER", "c61744ed-3360-44b8-b0ad-0d6b3497b432")).build());
+        attributeValueHashMap.put("SK", AttributeValue.builder().s(String.join("#", "FRIEND", friendRequest.getFriendId().toString())).build());
+
+        Map<String, AttributeValueUpdate> updatedValue = new HashMap<>();
+        updatedValue.put("status", AttributeValueUpdate.builder().value(AttributeValue.builder().s(friendRequest.getStatus().toString()).build()).build());
+        CompletableFuture<Map<String, AttributeValue>> result = dynamoDbService.updateItem(attributeValueHashMap, updatedValue);
+        return Mono.fromCompletionStage(result).map(FriendRequestMapper::fromMap);
+    }
 }

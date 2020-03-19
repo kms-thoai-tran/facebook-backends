@@ -1,6 +1,5 @@
 package com.example.facebookbackend.dto.request;
 
-import com.example.facebookbackend.util.FriendRequestStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,5 +15,4 @@ import java.util.UUID;
 public class FriendRequestRequest {
     @NotNull(message = "friendId is required")
     UUID friendId;
-    FriendRequestStatus status;
 }
