@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -18,7 +19,7 @@ import java.util.UUID;
 public class PostRequest {
     String text;
     Set<UUID> tagIds;
-    Set<String> imageIds;
+    List<String> images;
     Map<String, FacebookLikeType> facebookLikes;
     Map<String, String> comments;
 }

@@ -36,6 +36,7 @@ public class PostService extends BaseService implements IPostService {
                 .userId(getCurrentUserId())
                 .tagIds(postRequest.getTagIds())
                 .text(postRequest.getText())
+                .images(postRequest.getImages())
                 .build();
         Map<String, AttributeValue> postItems = PostMapper.toMapCreate(post);
 

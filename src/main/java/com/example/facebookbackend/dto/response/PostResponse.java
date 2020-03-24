@@ -20,7 +20,7 @@ public class PostResponse extends SuccessResponse {
     UUID id;
     String text;
     Set<UUID> tagIds;
-    Set<String> imageIds;
+    List<String> images;
     Map<String, FacebookLikeType> facebookLikes;
     List<PostComment> postComments;
 }

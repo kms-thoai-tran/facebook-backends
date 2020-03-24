@@ -23,6 +23,9 @@ public class PostMapper {
         if (post.getTagIds() != null) {
             map.put("tagIds", AttributeValue.builder().ss(post.getTagIds().stream().map(x -> x.toString()).collect(Collectors.toList())).build());
         }
+        if (post.getImages() != null) {
+            map.put("images", AttributeValue.builder().ss(post.getImages()).build());
+        }
         return map;
     }
 
@@ -46,6 +49,9 @@ public class PostMapper {
                 facebookLikes.put(x.getKey(), FacebookLikeType.valueOf(x.getValue().s()));
             });
             postResponse.setFacebookLikes(facebookLikes);
+        }
+        if (attributeValueMap.get("images") != null) {
+            postResponse.setImages(attributeValueMap.get("images").ss());
         }
         postResponse.setId(UUID.fromString(attributeValueMap.get("PK").s().split("#")[1]));
         postResponse.setPostComments(comments);
@@ -71,6 +77,9 @@ public class PostMapper {
 //            postRequest.getComments().entrySet().stream().forEach( comment -> comments.put(comment.getKey(), AttributeValue.builder().s(comment.getValue()).build()));
 //            map.put("comments", AttributeValueUpdate.builder().value(AttributeValue.builder().m(comments).build()).build());
 //        }
+        if (postRequest.getImages() != null) {
+            map.put("images", AttributeValueUpdate.builder().value(AttributeValue.builder().ss(postRequest.getImages()).build()).action(AttributeAction.PUT).build());
+        }
         return map;
     }
 
