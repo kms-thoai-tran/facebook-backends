@@ -1,6 +1,7 @@
 package com.example.facebookbackend;
 
 import com.example.facebookbackend.service.IDynamoDbService;
+import com.example.facebookbackend.service.s3.IAmazonS3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -12,6 +13,9 @@ public class FacebookBackendApplication implements CommandLineRunner {
     @Autowired
     IDynamoDbService dynamoDbService;
 
+    @Autowired
+    IAmazonS3Service amazonS3Service;
+
 
     public static void main(String[] args) {
 //		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -22,7 +26,7 @@ public class FacebookBackendApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//         dynamoDbService.createTable();
-//        System.out.println("DONE");
+//         amazonS3Service.deleteBucket("facebook-image");
+//         amazonS3Service.createBucket("facebook-image");
     }
 }

@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface IAmazonS3Service {
     SuccessResponse uploadMultipleFiles(List<MultipartFile> files);
+
+    void createBucket(String bucket);
+
+    void deleteBucket(String bucket);
 }
