@@ -18,11 +18,13 @@ public interface IDynamoDbService {
 
     CompletableFuture<Map<String, AttributeValue>> updateItem(Map<String, AttributeValue> itemKey, Map<String, AttributeValueUpdate> updatedValue);
 
+    CompletableFuture<Map<String, AttributeValue>> updateItem(UpdateItemRequest request);
+
     CompletableFuture<Map<String, AttributeValue>> getItem(GetItemRequest getItemRequest);
 
     CompletableFuture<List<Map<String, AttributeValue>>> query(QueryRequest queryRequest);
 
-    CompletableFuture<List<Map<String, AttributeValue>>> findAllByItemRequest(ScanRequest scanRequest);
+    CompletableFuture<List<Map<String, AttributeValue>>> scan(ScanRequest scanRequest);
 
     void batchWriteItem(BatchWriteItemRequest batchWriteItemRequest);
 

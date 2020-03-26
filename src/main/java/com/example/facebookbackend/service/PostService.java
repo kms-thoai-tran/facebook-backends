@@ -4,7 +4,6 @@ import com.example.facebookbackend.dto.request.PostCommentRequest;
 import com.example.facebookbackend.dto.request.PostRequest;
 import com.example.facebookbackend.dto.response.PostResponse;
 import com.example.facebookbackend.dto.response.SuccessResponse;
-import com.example.facebookbackend.dto.response.UserResponse;
 import com.example.facebookbackend.model.Post;
 import com.example.facebookbackend.model.PostComment;
 import com.example.facebookbackend.repository.IFacebookLikeRepository;
@@ -82,36 +81,13 @@ public class PostService extends BaseService implements IPostService {
                 .build();
         CompletableFuture<Map<String, AttributeValue>> mapCompletableFuture = dynamoDbService.getItem(getItemRequest);
         List<PostComment> postComments = getComments(id);
+        Set<UUID> userIds = postComments.stream().map(postComment -> postComment.getUserId()).collect(Collectors.toSet());
         PostResponse postResponse = PostMapper.fromMap(mapCompletableFuture.join(), postComments);
-//        return Mono.just(postResponse);
+
         return Mono.fromCompletionStage(mapCompletableFuture).map(x -> PostMapper.fromMap(x, postComments));
     }
 
     private void validatePostRequest(PostRequest postRequest) {
-
-    }
-
-    private void createFacebookLikes(UUID postId, List<UserResponse> userResponses, Set<UUID> facebookLikeIds) {
-        Map<String, Map<String, AttributeValue>> attributeValueHashMapResult = new HashMap<>();
-        facebookLikeIds.stream().forEach(tagId -> {
-            Map<String, AttributeValue> attributeValueHashMap = new HashMap<>();
-            attributeValueHashMap.put("PK", AttributeValue.builder().s(String.join("#", "POST", postId.toString())).build());
-            attributeValueHashMap.put("SK", AttributeValue.builder().s(String.join("#", "LIKE", tagId.toString())).build());
-            attributeValueHashMapResult.put(tagId.toString(), attributeValueHashMap);
-        });
-
-        Map<String, List<WriteRequest>> requestItems = new HashMap<>();
-        List<WriteRequest> writeRequests = facebookLikeIds.stream().map(x ->
-                WriteRequest.builder().putRequest(PutRequest.builder()
-                        .item(attributeValueHashMapResult.get(x.toString())).build())
-                        .build())
-                .collect(Collectors.toList());
-
-        requestItems.put("facebook", writeRequests);
-        BatchWriteItemRequest batchWriteItemRequest = BatchWriteItemRequest.builder()
-                .requestItems(requestItems)
-                .build();
-        dynamoDbService.batchWriteItem(batchWriteItemRequest);
 
     }
 
@@ -125,6 +101,7 @@ public class PostService extends BaseService implements IPostService {
         attributeValueHashMap.put("SK", AttributeValue.builder().s(commentId).build());
         attributeValueHashMap.put("userId", AttributeValue.builder().s(String.join("#", "USER", postCommentRequest.getUserId().toString())).build());
         attributeValueHashMap.put("comment", AttributeValue.builder().s(postCommentRequest.getComment()).build());
+        attributeValueHashMap.put("facebookLikes", AttributeValue.builder().m(new HashMap<>()).build());
         CompletableFuture<Map<String, AttributeValue>> updateItem = dynamoDbService.putItem(attributeValueHashMap);
         return Mono.fromCompletionStage(updateItem).map(PostCommentMapper::fromMap);
     }

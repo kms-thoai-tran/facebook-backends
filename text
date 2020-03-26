@@ -1,0 +1,17 @@
+Create a bucket
+bash-3.2$ aws --endpoint-url=http://localhost:4572 s3 mb s3://mytestbucket
+make_bucket: mytestbucket
+
+bash-3.2$ aws --endpoint-url=http://localhost:4572 s3 ls
+2006-02-03 08:45:09 mytestbucket
+Copy a file over
+bash-3.2$ aws --endpoint-url=http://localhost:4572 s3 cp /tmp/mongo.log s3://mytestbucket
+upload: ../../../../tmp/mongo.log to s3://mytestbucket/mongo.log
+
+bash-3.2$ aws --endpoint-url=http://localhost:4572 s3 ls s3://mytestbucket
+2017-04-05 01:18:39       4789 mongo.log
+Delete this file
+bash-3.2$ aws --endpoint-url=http://localhost:4572 s3 rm s3://mytestbucket/mongo.log
+delete: s3://mytestbucket/mongo.log
+
+bash-3.2$ aws --endpoint-url=http://localhost:4572 s3 ls s3://mytestbucket

@@ -26,6 +26,7 @@ public class PostMapper {
         if (post.getImages() != null) {
             map.put("images", AttributeValue.builder().ss(post.getImages()).build());
         }
+        map.put("facebookLikes", AttributeValue.builder().m(new HashMap<>()).build());
         return map;
     }
 
@@ -67,11 +68,11 @@ public class PostMapper {
         if (postRequest.getTagIds() != null) {
             map.put("tagIds", AttributeValueUpdate.builder().value(AttributeValue.builder().ss(postRequest.getTagIds().stream().map(x -> x.toString()).collect(Collectors.toList())).build()).action(AttributeAction.PUT).build());
         }
-        if (postRequest.getFacebookLikes() != null) {
-            Map<String, AttributeValue> likes = new HashMap<>();
-            postRequest.getFacebookLikes().entrySet().stream().forEach(like -> likes.put(like.getKey(), AttributeValue.builder().s(like.getValue().toString()).build()));
-            map.put("facebookLikes", AttributeValueUpdate.builder().value(AttributeValue.builder().m(likes).build()).build());
-        }
+//        if (postRequest.getFacebookLikes() != null) {
+//            Map<String, AttributeValue> likes = new HashMap<>();
+//            postRequest.getFacebookLikes().entrySet().stream().forEach(like -> likes.put(like.getKey(), AttributeValue.builder().s(like.getValue().toString()).build()));
+//            map.put("facebookLikes", AttributeValueUpdate.builder().value(AttributeValue.builder().m(likes).build()).build());
+//        }
 //        if (postRequest.getComments() != null) {
 //            Map<String, AttributeValue> comments = new HashMap<>();
 //            postRequest.getComments().entrySet().stream().forEach( comment -> comments.put(comment.getKey(), AttributeValue.builder().s(comment.getValue()).build()));

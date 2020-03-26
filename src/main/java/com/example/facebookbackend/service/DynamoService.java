@@ -101,7 +101,12 @@ public class DynamoService implements IDynamoDbService {
                 .attributeUpdates(updatedValue)
                 .returnValues(ReturnValue.ALL_NEW)
                 .build();
-        CompletableFuture<UpdateItemResponse> completableFuture = dynamoDbAsyncClient.updateItem(updateItemRequest);
+        return updateItem(updateItemRequest);
+    }
+
+    @Override
+    public CompletableFuture<Map<String, AttributeValue>> updateItem(UpdateItemRequest request) {
+        CompletableFuture<UpdateItemResponse> completableFuture = dynamoDbAsyncClient.updateItem(request);
         return completableFuture.thenApplyAsync(UpdateItemResponse::attributes);
     }
 
@@ -119,7 +124,7 @@ public class DynamoService implements IDynamoDbService {
     }
 
     @Override
-    public CompletableFuture<List<Map<String, AttributeValue>>> findAllByItemRequest(ScanRequest scanRequest) {
+    public CompletableFuture<List<Map<String, AttributeValue>>> scan(ScanRequest scanRequest) {
         CompletableFuture<ScanResponse> scanResponseCompletableFuture = dynamoDbAsyncClient.scan(scanRequest);
         return scanResponseCompletableFuture.thenApplyAsync(ScanResponse::items);
     }
