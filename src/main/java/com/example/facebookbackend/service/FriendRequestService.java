@@ -3,7 +3,6 @@ package com.example.facebookbackend.service;
 import com.example.facebookbackend.dto.request.FriendRequestRequest;
 import com.example.facebookbackend.dto.response.FriendRequestResponse;
 import com.example.facebookbackend.model.FriendRequest;
-import com.example.facebookbackend.repository.IUserRepository;
 import com.example.facebookbackend.service.mapper.FriendRequestMapper;
 import com.example.facebookbackend.util.FriendRequestStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +19,6 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 public class FriendRequestService extends BaseService implements IFriendRequestService {
-
-    @Autowired
-    IUserRepository userRepository;
-
     @Autowired
     IDynamoDbService dynamoDbService;
 

@@ -26,7 +26,7 @@ public class FacebookBackendApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//         amazonS3Service.deleteBucket("facebook-image");
-//         amazonS3Service.createBucket("facebook-image");
+//         dynamoDbService.deleteTable("facebook");
+//         dynamoDbService.createTable();
     }
 }

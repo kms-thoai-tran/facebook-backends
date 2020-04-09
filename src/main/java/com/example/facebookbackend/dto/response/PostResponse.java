@@ -1,7 +1,6 @@
 package com.example.facebookbackend.dto.response;
 
 import com.example.facebookbackend.model.PostComment;
-import com.example.facebookbackend.util.FacebookLikeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -19,8 +17,8 @@ import java.util.UUID;
 public class PostResponse extends SuccessResponse {
     UUID id;
     String text;
-    Set<UUID> tagIds;
+    Map<String, String> tags;
     List<String> images;
-    Map<String, FacebookLikeType> facebookLikes;
+    Map<String, Map<String, String>> facebookLikes;
     List<PostComment> postComments;
 }

@@ -5,36 +5,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
 public class User extends DbEntityBase {
-    @Id
-    @GeneratedValue(generator = "uuid2", strategy = GenerationType.IDENTITY)
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)")
     UUID id;
-
-    @NotBlank(message = "email is required")
-    @Column(unique = true)
     String email;
-
     String password;
-
-    @Column(name = "role", length = 50)
     String role;
-
-    @Column(name = "enabled")
     boolean enabled;
+    String name;
 
 
     public static User fromEntity(UserSignUpRequest userSignUpRequest) {
@@ -44,6 +29,7 @@ public class User extends DbEntityBase {
         User user = new User();
         user.setPassword(new BCryptPasswordEncoder().encode(userSignUpRequest.getPassword()));
         user.setEmail(userSignUpRequest.getEmail());
+        user.setName(userSignUpRequest.getName());
         return user;
     }
 }

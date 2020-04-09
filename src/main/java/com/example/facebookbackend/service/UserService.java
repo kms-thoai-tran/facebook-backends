@@ -4,9 +4,9 @@ import com.example.facebookbackend.dto.request.UserSignUpRequest;
 import com.example.facebookbackend.dto.response.UserResponse;
 import com.example.facebookbackend.model.User;
 import com.example.facebookbackend.model.UserPrincipal;
-import com.example.facebookbackend.repository.IUserRepository;
 import com.example.facebookbackend.service.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,8 +24,9 @@ import static java.util.Arrays.asList;
 
 @Service
 public class UserService implements UserDetailsService, IUserService {
-    @Autowired
-    private IUserRepository userRepository;
+
+    @Value("${dynamodb.table.facebook}")
+    String tableName;
 
     @Autowired
     private IDynamoDbService dynamoDbService;
@@ -35,17 +36,10 @@ public class UserService implements UserDetailsService, IUserService {
         HashMap<String, AttributeValue> attrValues =
                 new HashMap<String, AttributeValue>();
         attrValues.put(":SK", AttributeValue.builder().s(email).build());
-        //set up an alias for the partition key name in case it's a reserved word
-//        HashMap<String,String> attrNameAlias = new HashMap<>();
-
-//        attrNameAlias.put("#SKAlias", "SK");
-
-
         QueryRequest queryRequest = QueryRequest.builder()
-                .tableName("facebook")
+                .tableName(tableName)
                 .indexName("SKIndex")
                 .keyConditionExpression("SK=:SK")
-//                .expressionAttributeNames(attrNameAlias)
                 .expressionAttributeValues(attrValues)
                 .build();
         CompletableFuture<List<Map<String, AttributeValue>>> query = dynamoDbService.query(queryRequest);
@@ -64,7 +58,7 @@ public class UserService implements UserDetailsService, IUserService {
     @Override
     public List<UserResponse> getAll() {
 
-        List<User> users = userRepository.findAll();
+        List<User> users = Arrays.asList(null);
         if (users.size() == 0) {
             return new ArrayList<>();
         }
@@ -73,12 +67,13 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public Mono<UserResponse> signUp(UserSignUpRequest userSignUpRequest) {
-        CompletableFuture<Map<String, AttributeValue>> a = dynamoDbService.putItem(UserMapper.toMapGet(User.builder()
+        CompletableFuture<Map<String, AttributeValue>> mapCompletableFuture = dynamoDbService.putItem(UserMapper.toMapCreate(User.builder()
                 .id(UUID.randomUUID())
                 .email(userSignUpRequest.getEmail())
                 .password(userSignUpRequest.getPassword())
+                .name(userSignUpRequest.getName())
                 .enabled(true)
                 .build()));
-        return Mono.fromCompletionStage(a).map(UserMapper::fromMap);
+        return Mono.fromCompletionStage(mapCompletableFuture).map(UserMapper::toMapGet);
     }
 }

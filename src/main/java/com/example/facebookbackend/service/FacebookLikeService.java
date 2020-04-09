@@ -70,7 +70,7 @@ public class FacebookLikeService extends BaseService implements IFacebookLikeSer
             Map<String, AttributeValue> updatedValue = new HashMap<>();
             Map<String, AttributeValue> data = new HashMap<>();
             data.put("type", AttributeValue.builder().s(request.getType().toString()).build());
-            data.put("userName", AttributeValue.builder().s(getCurrentUser().getEmail()).build());
+            data.put("userName", AttributeValue.builder().s(getCurrentUser().getName()).build());
             updatedValue.put(":item", AttributeValue.builder().m(data).build());
             builder.updateExpression("SET facebookLikes.#user = :item");
             builder.expressionAttributeValues(updatedValue);

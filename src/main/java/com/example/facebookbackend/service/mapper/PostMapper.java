@@ -1,16 +1,16 @@
 package com.example.facebookbackend.service.mapper;
 
-import com.example.facebookbackend.dto.request.PostRequest;
 import com.example.facebookbackend.dto.response.PostResponse;
 import com.example.facebookbackend.model.Post;
 import com.example.facebookbackend.model.PostComment;
-import com.example.facebookbackend.util.FacebookLikeType;
 import software.amazon.awssdk.services.dynamodb.model.AttributeAction;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class PostMapper {
     public static Map<String, AttributeValue> toMapCreate(Post post) {
@@ -20,11 +20,11 @@ public class PostMapper {
         if (post.getText() != null) {
             map.put("message", AttributeValue.builder().s(post.getText()).build());
         }
-        if (post.getTagIds() != null) {
-            map.put("tagIds", AttributeValue.builder().ss(post.getTagIds().stream().map(x -> x.toString()).collect(Collectors.toList())).build());
-        }
         if (post.getImages() != null) {
             map.put("images", AttributeValue.builder().ss(post.getImages()).build());
+        }
+        if (post.getTags().size() > 0) {
+            map.put("tags", AttributeValue.builder().m(post.getTags()).build());
         }
         map.put("facebookLikes", AttributeValue.builder().m(new HashMap<>()).build());
         return map;
@@ -39,15 +39,18 @@ public class PostMapper {
         if (attributeValueMap.get("message") != null) {
             postResponse.setText(attributeValueMap.get("message").s());
         }
-        if (attributeValueMap.get("tagIds") != null) {
-            Set<UUID> tagIds = attributeValueMap.get("tagIds").ss().stream().map(x -> UUID.fromString(x)).collect(Collectors.toSet());
-            postResponse.setTagIds(tagIds);
+        if (attributeValueMap.get("tags") != null) {
+            Map<String, AttributeValue> tagsMap = attributeValueMap.get("tags").m();
+            Map<String, String> tags = new HashMap<>();
+            tagsMap.entrySet().stream().forEach(tag -> tags.put(tag.getKey(), tag.getValue().s()));
+            postResponse.setTags(tags);
         }
         if (attributeValueMap.get("facebookLikes") != null) {
-            Map<String, FacebookLikeType> facebookLikes = new HashMap<>();
-
+            Map<String, Map<String, String>> facebookLikes = new HashMap<>();
             attributeValueMap.get("facebookLikes").m().entrySet().stream().forEach(x -> {
-                facebookLikes.put(x.getKey(), FacebookLikeType.valueOf(x.getValue().s()));
+                Map<String, String> object1 = new HashMap<>();
+                x.getValue().m().entrySet().stream().forEach(ob -> object1.put(ob.getKey(), ob.getValue().s()));
+                facebookLikes.put(x.getKey(), object1);
             });
             postResponse.setFacebookLikes(facebookLikes);
         }
@@ -59,14 +62,14 @@ public class PostMapper {
         return postResponse;
     }
 
-    public static Map<String, AttributeValueUpdate> toMapUpdate(PostRequest postRequest) {
+    public static Map<String, AttributeValueUpdate> toMapUpdate(Post post) {
         Map<String, AttributeValueUpdate> map = new HashMap<>();
 
-        if (postRequest.getText() != null) {
-            map.put("message", AttributeValueUpdate.builder().value(AttributeValue.builder().s(postRequest.getText()).build()).action(AttributeAction.PUT).build());
+        if (post.getText() != null) {
+            map.put("message", AttributeValueUpdate.builder().value(AttributeValue.builder().s(post.getText()).build()).action(AttributeAction.PUT).build());
         }
-        if (postRequest.getTagIds() != null) {
-            map.put("tagIds", AttributeValueUpdate.builder().value(AttributeValue.builder().ss(postRequest.getTagIds().stream().map(x -> x.toString()).collect(Collectors.toList())).build()).action(AttributeAction.PUT).build());
+        if (post.getTags() != null) {
+            map.put("tags", AttributeValueUpdate.builder().value(AttributeValue.builder().m(post.getTags()).build()).action(AttributeAction.PUT).build());
         }
 //        if (postRequest.getFacebookLikes() != null) {
 //            Map<String, AttributeValue> likes = new HashMap<>();
@@ -78,8 +81,8 @@ public class PostMapper {
 //            postRequest.getComments().entrySet().stream().forEach( comment -> comments.put(comment.getKey(), AttributeValue.builder().s(comment.getValue()).build()));
 //            map.put("comments", AttributeValueUpdate.builder().value(AttributeValue.builder().m(comments).build()).build());
 //        }
-        if (postRequest.getImages() != null) {
-            map.put("images", AttributeValueUpdate.builder().value(AttributeValue.builder().ss(postRequest.getImages()).build()).action(AttributeAction.PUT).build());
+        if (post.getImages() != null) {
+            map.put("images", AttributeValueUpdate.builder().value(AttributeValue.builder().ss(post.getImages()).build()).action(AttributeAction.PUT).build());
         }
         return map;
     }

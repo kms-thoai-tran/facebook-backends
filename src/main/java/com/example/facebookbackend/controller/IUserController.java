@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Validated
@@ -20,6 +21,6 @@ public interface IUserController {
     ResponseEntity<List<UserResponse>> getAll();
 
     @PostMapping("/sign-up")
-    ResponseEntity<Mono<UserResponse>> signUp(@RequestBody UserSignUpRequest userSignUpRequest);
+    ResponseEntity<Mono<UserResponse>> signUp(@RequestBody @Valid UserSignUpRequest userSignUpRequest);
 
 }

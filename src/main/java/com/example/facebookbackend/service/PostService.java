@@ -4,12 +4,15 @@ import com.example.facebookbackend.dto.request.PostCommentRequest;
 import com.example.facebookbackend.dto.request.PostRequest;
 import com.example.facebookbackend.dto.response.PostResponse;
 import com.example.facebookbackend.dto.response.SuccessResponse;
+import com.example.facebookbackend.dto.response.UserResponse;
 import com.example.facebookbackend.model.Post;
 import com.example.facebookbackend.model.PostComment;
-import com.example.facebookbackend.repository.IFacebookLikeRepository;
 import com.example.facebookbackend.service.mapper.PostCommentMapper;
 import com.example.facebookbackend.service.mapper.PostMapper;
+import com.example.facebookbackend.service.mapper.UserMapper;
+import com.example.facebookbackend.util.BuilderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import software.amazon.awssdk.services.dynamodb.model.*;
@@ -20,9 +23,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class PostService extends BaseService implements IPostService {
-
-    @Autowired
-    IFacebookLikeRepository facebookLikeRepository;
+    @Value("${dynamodb.table.facebook}")
+    String tableName;
 
     @Autowired
     IDynamoDbService dynamoDbService;
@@ -30,10 +32,31 @@ public class PostService extends BaseService implements IPostService {
     @Override
     public Mono<PostResponse> create(PostRequest postRequest) {
         validatePostRequest(postRequest);
+        Map<String, AttributeValue> tags = new HashMap<>();
+
+        if (postRequest.getTagIds() != null) {
+//            HashMap<String, AttributeValue> attrValues =
+//                    new HashMap<>();
+//            attrValues.put(":PK", AttributeValue.builder().l(postRequest.getTagIds().stream().map(tagId ->
+//                    AttributeValue.builder().s(String.join("#", "USER", tagId.toString())).build()).collect(Collectors.toList())
+//            ).build());
+            Map<String, Object> queryMap = BuilderUtils.generateQueryInClause("PK", postRequest.getTagIds().stream().map(tag -> String.join("#", "USER", tag.toString())).collect(Collectors.toList()));
+
+            ScanRequest scanRequest = ScanRequest.builder()
+                    .tableName(tableName)
+                    .filterExpression((String) queryMap.get("query"))
+                    .expressionAttributeValues((Map<String, AttributeValue>) queryMap.get("attributeValues"))
+                    .build();
+            CompletableFuture<List<Map<String, AttributeValue>>> completableFuture = dynamoDbService.scan(scanRequest);
+            List<UserResponse> userResponses = completableFuture.join().stream().map(UserMapper::toMapGet).collect(Collectors.toList());
+            userResponses.stream().forEach(userResponse -> {
+                tags.put(userResponse.getId().toString(), AttributeValue.builder().s(userResponse.getName()).build());
+            });
+        }
         Post post = Post.builder()
                 .id(UUID.randomUUID())
                 .userId(getCurrentUserId())
-                .tagIds(postRequest.getTagIds())
+                .tags(tags)
                 .text(postRequest.getText())
                 .images(postRequest.getImages())
                 .build();
@@ -51,7 +74,28 @@ public class PostService extends BaseService implements IPostService {
         Map<String, AttributeValue> attributeValueHashMap = new HashMap<>();
         attributeValueHashMap.put("PK", AttributeValue.builder().s(String.join("#", "POST", id.toString())).build());
         attributeValueHashMap.put("SK", AttributeValue.builder().s(String.join("#", "USER", getCurrentUserId().toString())).build());
-        Map<String, AttributeValueUpdate> updatedValue = PostMapper.toMapUpdate(postRequest);
+        Map<String, AttributeValue> tags = new HashMap<>();
+        if (postRequest.getTagIds() != null) {
+            Map<String, Object> queryMap = BuilderUtils.generateQueryInClause("PK", postRequest.getTagIds().stream().map(tag -> String.join("#", "USER", tag.toString())).collect(Collectors.toList()));
+            ScanRequest scanRequest = ScanRequest.builder()
+                    .tableName(tableName)
+                    .filterExpression((String) queryMap.get("query"))
+                    .expressionAttributeValues((Map<String, AttributeValue>) queryMap.get("attributeValues"))
+                    .build();
+            CompletableFuture<List<Map<String, AttributeValue>>> completableFuture = dynamoDbService.scan(scanRequest);
+            List<UserResponse> userResponses = completableFuture.join().stream().map(UserMapper::toMapGet).collect(Collectors.toList());
+            userResponses.stream().forEach(userResponse -> {
+                tags.put(userResponse.getId().toString(), AttributeValue.builder().s(userResponse.getName()).build());
+            });
+        }
+        Post post = Post.builder()
+                .id(UUID.randomUUID())
+                .userId(getCurrentUserId())
+                .tags(tags)
+                .text(postRequest.getText())
+                .images(postRequest.getImages())
+                .build();
+        Map<String, AttributeValueUpdate> updatedValue = PostMapper.toMapUpdate(post);
         CompletableFuture<Map<String, AttributeValue>> a = dynamoDbService.updateItem(attributeValueHashMap, updatedValue);
         return Mono.fromCompletionStage(a).map(x -> PostMapper.fromMap(x, null));
     }

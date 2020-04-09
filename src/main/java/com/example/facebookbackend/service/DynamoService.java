@@ -57,7 +57,7 @@ public class DynamoService implements IDynamoDbService {
                                 .attributeName("SK")
                                 .keyType(KeyType.HASH).build()
                         )
-                        .projection(Projection.builder().projectionType(ProjectionType.INCLUDE).nonKeyAttributes("password").build())
+                        .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
                         .build())
                 .provisionedThroughput(ptIndex)
 
